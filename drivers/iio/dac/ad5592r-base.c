@@ -21,6 +21,10 @@
 
 #include "ad5592r-base.h"
 
+/* Parameters for dynamic channel mode setting */
+static u8 update_channel_mode;
+static u8 new_channel_modes[AD559XR_CHANNEL_NR];
+
 static int ad5592r_gpio_get(struct gpio_chip *chip, unsigned offset)
 {
 	struct ad5592r_state *st = gpiochip_get_data(chip);
@@ -132,7 +136,7 @@ static int ad5592r_gpio_init(struct ad5592r_state *st)
 
 	st->gpiochip.label = dev_name(st->dev);
 	st->gpiochip.base = -1;
-	st->gpiochip.ngpio = 8;
+	st->gpiochip.ngpio = AD559XR_CHANNEL_NR;
 	st->gpiochip.parent = st->dev;
 	st->gpiochip.can_sleep = true;
 	st->gpiochip.direction_input = ad5592r_gpio_direction_input;
@@ -532,6 +536,10 @@ static int ad5592r_alloc_channels(struct iio_dev *iio_dev)
 			st->channel_offstate[reg] = tmp;
 	}
 
+	/* Update default channel modes set by external module */
+	if (update_channel_mode == 1)
+		memcpy(st->channel_modes, new_channel_modes, ARRAY_SIZE(st->channel_modes));
+
 	channels = devm_kcalloc(st->dev,
 			1 + 2 * num_channels, sizeof(*channels),
 			GFP_KERNEL);
@@ -567,7 +575,7 @@ static int ad5592r_alloc_channels(struct iio_dev *iio_dev)
 	}
 
 	channels[curr_channel].type = IIO_TEMP;
-	channels[curr_channel].channel = 8;
+	channels[curr_channel].channel = AD559XR_CHANNEL_NR;
 	channels[curr_channel].info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
 				   BIT(IIO_CHAN_INFO_SCALE) |
 				   BIT(IIO_CHAN_INFO_OFFSET);
@@ -589,6 +597,13 @@ static void ad5592r_init_scales(struct ad5592r_state *st, int vref_mV)
 		div_s64_rem(tmp * 2, 1000000000LL, &st->scale_avail[1][1]);
 }
 
+void ad5592r_update_default_channel_modes(u8 *new_modes)
+{
+	update_channel_mode = 1;
+	memcpy(new_channel_modes, new_modes, AD559XR_CHANNEL_NR);
+}
+EXPORT_SYMBOL_GPL(ad5592r_update_default_channel_modes);
+
 int ad5592r_probe(struct device *dev, const char *name,
 		const struct ad5592r_rw_ops *ops)
 {
@@ -603,7 +618,7 @@ int ad5592r_probe(struct device *dev, const char *name,
 	st = iio_priv(iio_dev);
 	st->dev = dev;
 	st->ops = ops;
-	st->num_channels = 8;
+	st->num_channels = AD559XR_CHANNEL_NR;
 	dev_set_drvdata(dev, iio_dev);
 
 	st->reg = devm_regulator_get_optional(dev, "vref");

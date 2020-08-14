@@ -21,6 +21,10 @@
 #define AD5593R_MODE_GPIO_READBACK	(6 << 4)
 #define AD5593R_MODE_REG_READBACK	(7 << 4)
 
+/* Parameters for dynamic channel mode setting */
+static char *ch_mode = "";
+module_param(ch_mode, charp, 0400);
+
 static int ad5593r_write_dac(struct ad5592r_state *st, unsigned chan, u16 value)
 {
 	struct i2c_client *i2c = to_i2c_client(st->dev);
@@ -92,9 +96,49 @@ static const struct ad5592r_rw_ops ad5593r_rw_ops = {
 	.gpio_read = ad5593r_gpio_read,
 };
 
+static void ad5593r_check_new_channel_mode(void)
+{
+	char *new_mode, tmp[2];
+	u8 new_ch_modes[AD559XR_CHANNEL_NR];
+	int idx;
+
+	if (strlen(ch_mode) != AD559XR_CHANNEL_NR)
+		return;
+
+	new_mode = ch_mode;
+
+	/* Check if all channel modes are valid */
+	for (idx = 0; idx < AD559XR_CHANNEL_NR; idx++) {
+		switch (new_mode[idx]) {
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '8':
+			continue;
+		default:
+			/* Invalid setting exist, ignore the settings */
+			return;
+		}
+	}
+
+	/* Set the new modes to ad5592r-base driver to setup the new channel modes */
+	memset(tmp, 0, 2);
+	for (idx = 0; idx < AD559XR_CHANNEL_NR; idx++) {
+		tmp[0] = new_mode[idx];
+		if (kstrtou8(tmp, 10, &new_ch_modes[AD559XR_CHANNEL_NR - idx - 1])) {
+			/* Converting error, ignore the settings */
+			return;
+		}
+	}
+
+	ad5592r_update_default_channel_modes(new_ch_modes);
+}
+
 static int ad5593r_i2c_probe(struct i2c_client *i2c,
 		const struct i2c_device_id *id)
 {
+	ad5593r_check_new_channel_mode();
 	return ad5592r_probe(&i2c->dev, id->name, &ad5593r_rw_ops);
 }
 

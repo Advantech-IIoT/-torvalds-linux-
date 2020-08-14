@@ -39,6 +39,9 @@ enum ad5592r_registers {
 #define AD5592R_REG_CTRL_ADC_RANGE	BIT(5)
 #define AD5592R_REG_CTRL_DAC_RANGE	BIT(4)
 
+/* Define quantity of channels of AD5592R/AD5593R */
+#define AD559XR_CHANNEL_NR		8
+
 struct ad5592r_rw_ops {
 	int (*write_dac)(struct ad5592r_state *st, unsigned chan, u16 value);
 	int (*read_adc)(struct ad5592r_state *st, unsigned chan, u16 *value);
@@ -69,6 +72,7 @@ struct ad5592r_state {
 	__be16 spi_msg_nop;
 };
 
+void ad5592r_update_default_channel_modes(u8 *new_modes);
 int ad5592r_probe(struct device *dev, const char *name,
 		const struct ad5592r_rw_ops *ops);
 int ad5592r_remove(struct device *dev);
