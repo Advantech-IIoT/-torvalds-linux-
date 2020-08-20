@@ -2069,6 +2069,7 @@ static struct usb_serial_driver option_1port_device = {
 #ifdef CONFIG_PM
 	.suspend           = usb_wwan_suspend,
 	.resume            = usb_wwan_resume,
+	.reset_resume      = usb_wwan_resume,
 #endif
 };
 
@@ -2102,6 +2103,11 @@ static int option_probe(struct usb_serial *serial,
 	 * can change (e.g. Quectel EP06).
 	 */
 	if (device_flags & NUMEP2 && iface_desc->bNumEndpoints != 2)
+		return -ENODEV;
+
+	/* Quectel EC25 & EC21 & EG91 & EG95 ... interface 4 can be used as USB network device */
+	if (serial->dev->descriptor.idVendor == cpu_to_le16(0x2c7c) &&
+		serial->interface->cur_altsetting->desc.bInterfaceNumber >= 4)
 		return -ENODEV;
 
 	/* Store the device flags so we can use them during attach. */
