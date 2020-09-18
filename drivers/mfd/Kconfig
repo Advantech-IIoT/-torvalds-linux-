@@ -2118,5 +2118,14 @@ config SGI_MFD_IOC3
 	  If you have an SGI Origin, Octane, or a PCI IOC3 card,
 	  then say Y. Otherwise say N.
 
+config MFD_AHC1EC0
+	tristate "Advantech Embedded Controller Module"
+	select MFD_CORE
+	help
+          This is the core function that for Advantech EC drivers. It
+          includes the sub-devices such as hwmon, watchdog, etc. And also
+          provides expose functions for sub-devices to read/write the value
+          to embedded controller.
+
 endmenu
 endif
