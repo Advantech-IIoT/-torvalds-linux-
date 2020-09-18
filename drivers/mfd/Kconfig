@@ -2154,5 +2154,15 @@ config MFD_INTEL_M10_BMC
 	  additional drivers must be enabled in order to use the functionality
 	  of the device.
 
+config MFD_AHC1EC0
+	tristate "Advantech AHC1EC0 Embedded Controller Module"
+	depends on X86
+	select MFD_CORE
+	help
+	  This is the core function that for Advantech EC drivers. It
+	  includes the sub-devices such as hwmon, watchdog, etc. And also
+	  provides expose functions for sub-devices to read/write the value
+	  to embedded controller.
+
 endmenu
 endif
