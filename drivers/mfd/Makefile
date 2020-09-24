@@ -270,3 +270,4 @@ obj-$(CONFIG_MFD_INTEL_M10_BMC)   += intel-m10-bmc.o
 
 obj-$(CONFIG_MFD_AHC1EC0)	+= ahc1ec0.o
 obj-$(CONFIG_MFD_AHC1EC0_HWMON)	+= ahc1ec0-hwmon.o
+obj-$(CONFIG_MFD_AHC1EC0_WDT)	+= ahc1ec0-wdt.o
