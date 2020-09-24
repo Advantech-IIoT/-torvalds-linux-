@@ -2095,6 +2095,14 @@ config SENSORS_INTEL_M10_BMC_HWMON
 	  sensors monitor various telemetry data of different components on the
 	  card, e.g. board temperature, FPGA core temperature/voltage/current.
 
+config SENSORS_AHC1EC0_HWMON
+	tristate "Advantech EC Hardware Monitor Function"
+	depends on MFD_AHC1EC0
+	help
+	  This is sub-device for Advantech embedded controller AHC1EC0. This
+	  driver provides the sysfs attributes for applications to monitor
+	  the system status.
+
 if ACPI
 
 comment "ACPI drivers"
