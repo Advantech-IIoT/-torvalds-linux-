@@ -2183,5 +2183,9 @@ config MFD_AHC1EC0_HWMON
 	  driver provides the sysfs attribues for applications to monitor
 	  the system status.
 
+config MFD_AHC1EC0_WDT
+	tristate "Advantech EC Watchdog Function"
+	depends on MFD_AHC1EC0
+
 endmenu
 endif
