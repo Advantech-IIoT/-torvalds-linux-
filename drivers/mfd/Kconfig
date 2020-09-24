@@ -2175,5 +2175,13 @@ config MFD_AHC1EC0
 	  provides expose functions for sub-devices to read/write the value
 	  to embedded controller.
 
+config MFD_AHC1EC0_HWMON
+	tristate "Advantech EC Hareware Monitor Function"
+	depends on MFD_AHC1EC0
+	help
+	  This is sub-device for Advantech embedded controller AHC1EC0. This
+	  driver provides the sysfs attribues for applications to monitor
+	  the system status.
+
 endmenu
 endif
