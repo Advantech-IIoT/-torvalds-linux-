@@ -1634,6 +1634,14 @@ config NIC7018_WDT
 	  To compile this driver as a module, choose M here: the module will be
 	  called nic7018_wdt.
 
+config AHC1EC0_WDT
+	tristate "Advantech EC Watchdog Function"
+	depends on MFD_AHC1EC0
+	help
+	  This is sub-device for Advantech embedded controller AHC1EC0. This
+	  driver provide watchdog functionality for Advantech related
+	  applications to restart the system.
+
 # M68K Architecture
 
 config M54xx_WATCHDOG
