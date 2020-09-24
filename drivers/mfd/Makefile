@@ -265,5 +265,6 @@ obj-$(CONFIG_MFD_KHADAS_MCU) 	+= khadas-mcu.o
 
 obj-$(CONFIG_SGI_MFD_IOC3)	+= ioc3.o
 
-obj-$(CONFIG_MFD_AHC1EC0) 	+= ahc1ec0.o
+obj-$(CONFIG_MFD_AHC1EC0)	+= ahc1ec0.o
 obj-$(CONFIG_MFD_AHC1EC0_HWMON)	+= ahc1ec0-hwmon.o
+obj-$(CONFIG_MFD_AHC1EC0_WDT)	+= ahc1ec0-wdt.o
